@@ -43,7 +43,11 @@ pub fn run() {
             client::get_health_check,
             client::get_status,
             client::post_init,
-            client::post_reset
+            client::post_reset,
+            client::post_context_dataset,
+            client::post_period_dataset,
+            client::post_extract,
+            client::post_run
         ])
         .setup(|app| {
             start_backend();

@@ -8,7 +8,7 @@ use crate::{
 use anyhow::{anyhow, Context};
 use anyhow_tauri::IntoTAResult;
 pub use response::StatusResponse;
-use std::{collections::HashMap, str::FromStr};
+use std::{collections::HashMap, path::PathBuf, str::FromStr};
 use tauri::{AppHandle, State};
 use tauri_plugin_http::reqwest;
 
@@ -52,19 +52,7 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppDataMutex>) -> Resul
         .await
         .map_err(|e| e.to_string())?;
     match res.error_for_status() {
-        Ok(r) => {
-            handle_response_with_state(r, &app, state).await
-            /*
-            let st = r
-                .json::<StatusResponse>()
-                .await
-                .map_err(|e| e.to_string())?;
-            state.update_with_status_response(st);
-            state
-                .emit_update_appdata_to_frontend(&app)
-                .map_err(|e| e.to_string())?;
-            Ok(())*/
-        }
+        Ok(r) => handle_response_with_state(r, &app, state).await,
         Err(e) => Err(format!("Error getting status; {}", e)),
     }
 }
@@ -87,19 +75,7 @@ pub async fn post_init(
         .map_err(|e| e.to_string())?;
 
     match res.error_for_status() {
-        Ok(r) => {
-            handle_response_with_state(r, &app, state).await
-            /*
-            let st = r
-                .json::<StatusResponse>()
-                .await
-                .map_err(|e| e.to_string())?;
-            state.update_with_status_response(st);
-            state
-                .emit_update_appdata_to_frontend(&app)
-                .map_err(|e| e.to_string())?;
-            Ok(())*/
-        }
+        Ok(r) => handle_response_with_state(r, &app, state).await,
         Err(e) => Err(format!("Error posting init; {}", e)),
     }
 }
@@ -116,5 +92,76 @@ pub async fn post_reset(app: AppHandle, state: State<'_, AppDataMutex>) -> Resul
     match res.error_for_status() {
         Ok(r) => handle_response_with_state(r, &app, state).await,
         Err(e) => Err(format!("Error posting reset; {}", e)),
+    }
+}
+
+async fn post_dataset(
+    app: &AppHandle,
+    state: State<'_, AppDataMutex>,
+    path: PathBuf,
+    uri_path: &str,
+) -> Result<(), String> {
+    let mut body = HashMap::new();
+    body.insert("path", path.clone());
+
+    let client = reqwest::Client::new();
+    let res = client
+        .post(uri(uri_path))
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    match res.error_for_status() {
+        Ok(r) => handle_response_with_state(r, &app, state).await,
+        Err(e) => Err(format!("Error posting reset; {}", e)),
+    }
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn post_context_dataset(
+    app: AppHandle,
+    state: State<'_, AppDataMutex>,
+    path: PathBuf,
+) -> Result<(), String> {
+    post_dataset(&app, state, path, "context-dataset").await
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn post_period_dataset(
+    app: AppHandle,
+    state: State<'_, AppDataMutex>,
+    path: PathBuf,
+) -> Result<(), String> {
+    post_dataset(&app, state, path, "period-dataset").await
+}
+
+#[tauri::command]
+pub async fn post_extract(app: AppHandle, state: State<'_, AppDataMutex>) -> Result<(), String> {
+    let client = reqwest::Client::new();
+    let res = client
+        .post(uri("extract"))
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    match res.error_for_status() {
+        Ok(r) => handle_response_with_state(r, &app, state).await,
+        Err(e) => Err(format!("Error posting extract; {}", e)),
+    }
+}
+
+#[tauri::command]
+pub async fn post_run(app: AppHandle, state: State<'_, AppDataMutex>) -> Result<(), String> {
+    let client = reqwest::Client::new();
+    let res = client
+        .post(uri("run"))
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    match res.error_for_status() {
+        Ok(r) => handle_response_with_state(r, &app, state).await,
+        Err(e) => Err(format!("Error running verification; {}", e)),
     }
 }

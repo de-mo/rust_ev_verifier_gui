@@ -25,6 +25,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
+const inputValue = computed(() => {
+    if (props.zipFile) {
+        return props.zipFile
+    }
+    return props.modelValue
+})
+
 const onClick = (async () => {
     const file = await open({
         multiple: false,
@@ -43,7 +50,7 @@ const onClick = (async () => {
         <div class="col-sm-9">
             <div class="input-group">
                 <button v-if="!zipFile" class="btn btn-outline-secondary" type="button" @click="onClick">Choose</button>
-                <input type="text" class="form-control" :value="modelValue" readonly>
+                <input type="text" class="form-control" :value="inputValue" readonly>
             </div>
         </div>
     </div>

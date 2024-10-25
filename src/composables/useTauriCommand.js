@@ -3,11 +3,15 @@ import {
     TAURI_COMMAND_HEALTH_CHECK,
     TAURI_COMMAND_STATUS,
     TAURI_COMMAND_INIT,
-    TAURI_COMMAND_RESET
+    TAURI_COMMAND_RESET,
+    TAURI_COMMAND_CONTEXT_DATASET,
+    TAURI_COMMAND_PERIOD_DATASET,
+    TAURI_COMMAND_EXTRACT,
+    TAURI_COMMAND_RUN
 } from "../consts/tauri.js"
 
 export function useTauriCommand() {
-    const tauri_healthCheck = async () => {
+    const tauriHealthCheck = async () => {
         console.log("healthCheck")
         return new Promise((resolve, reject) => {
             invoke(TAURI_COMMAND_HEALTH_CHECK)
@@ -22,7 +26,7 @@ export function useTauriCommand() {
         })
     }
 
-    const tauri_status = async () => {
+    const tauriStatus = async () => {
         console.log("status")
         return new Promise((resolve, reject) => {
             invoke(TAURI_COMMAND_STATUS)
@@ -34,7 +38,7 @@ export function useTauriCommand() {
         })
     }
 
-    const tauri_init = async (period) => {
+    const tauriInit = async (period) => {
         console.log("init", period)
         return new Promise((resolve, reject) => {
             invoke(TAURI_COMMAND_INIT, { period: period })
@@ -46,7 +50,7 @@ export function useTauriCommand() {
         })
     }
 
-    const tauri_reset = async () => {
+    const tauriReset = async () => {
         console.log("reset")
         return new Promise((resolve, reject) => {
             invoke(TAURI_COMMAND_RESET)
@@ -58,5 +62,62 @@ export function useTauriCommand() {
         })
     }
 
-    return { tauri_healthCheck, tauri_status, tauri_init, tauri_reset }
+    const tauriContextDataset = async (path) => {
+        console.log("context_dataset", path)
+        return new Promise((resolve, reject) => {
+            invoke(TAURI_COMMAND_CONTEXT_DATASET, { path: path })
+                .then((response) => resolve())
+                .catch((error) => {
+                    console.log("context_dataset error", error)
+                    reject(error)
+                })
+        })
+    }
+
+    const tauriPeriodDataset = async (path) => {
+        console.log("period_dataset", path)
+        return new Promise((resolve, reject) => {
+            invoke(TAURI_COMMAND_PERIOD_DATASET, { path: path })
+                .then((response) => resolve())
+                .catch((error) => {
+                    console.log("period_dataset error", error)
+                    reject(error)
+                })
+        })
+    }
+
+    const tauriExtract = async () => {
+        console.log("extract")
+        return new Promise((resolve, reject) => {
+            invoke(TAURI_COMMAND_EXTRACT)
+                .then((response) => resolve())
+                .catch((error) => {
+                    console.log("extract error", error)
+                    reject(error)
+                })
+        })
+    }
+
+    const tauriRun = async () => {
+        console.log("run")
+        return new Promise((resolve, reject) => {
+            invoke(TAURI_COMMAND_RUN)
+                .then((response) => resolve())
+                .catch((error) => {
+                    console.log("extract error", error)
+                    reject(error)
+                })
+        })
+    }
+
+    return {
+        tauriHealthCheck,
+        tauriStatus,
+        tauriInit,
+        tauriReset,
+        tauriContextDataset,
+        tauriPeriodDataset,
+        tauriExtract,
+        tauriRun
+    }
 }

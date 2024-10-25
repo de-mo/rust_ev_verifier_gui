@@ -15,6 +15,7 @@
     "@tauri-apps/plugin-http": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "bootstrap": "^5.3.3",
+    "lodash": "^4.17.21",
     "vue": "^3.3.4"
   },
   "devDependencies": {

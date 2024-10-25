@@ -5,7 +5,7 @@ import { useTauriCommand } from '../composables/useTauriCommand.js'
 
 const isLoading = ref(false)
 
-const { tauri_reset } = useTauriCommand()
+const { tauriReset } = useTauriCommand()
 
 const reset = async () => {
     const ok = await ask('All the steps will be reverted. Are you sure?', {
@@ -14,7 +14,7 @@ const reset = async () => {
     });
     if (ok) {
         isLoading.value = true
-        tauri_reset().then(() => isLoading.value = false)
+        tauriReset().then(() => isLoading.value = false)
     }
 }
 </script>

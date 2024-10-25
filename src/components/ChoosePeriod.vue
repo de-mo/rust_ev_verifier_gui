@@ -28,11 +28,11 @@ const is_tally = computed(() => {
 const selectedValue = ref(null)
 const isLoading = ref(false)
 
-const { tauri_init: init } = useTauriCommand()
+const { tauriInit } = useTauriCommand()
 
 const choose_period = () => {
     isLoading.value = true
-    init(selectedValue.value).then(() => isLoading.value = false)
+    tauriInit(selectedValue.value).then(() => isLoading.value = false)
 }
 </script>
 

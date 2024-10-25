@@ -12,8 +12,11 @@ node_modules
 dist
 dist-ssr
 *.local
-2
+src-tauri/2
 .env
+data
+direct-trust
+
 
 # Editor directories and files
 .vscode/*
